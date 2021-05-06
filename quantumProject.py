@@ -1,8 +1,10 @@
-from qiskit import QuantumCircuit, assemble, Aer, extensions
+from qiskit import QuantumCircuit, assemble, Aer, extensions, QuantumRegister
+from qiskit.circuit.library import MCMTVChain
 from qiskit.visualization import plot_histogram
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+from qiskit.circuit.library.standard_gates import XGate
 
 #Number of qubits is 4
 nQubit = 4
@@ -23,9 +25,10 @@ for i in range(2**nQubit):
     else:
         matrix[i][i] = -1
 
+
 oracle = extensions.UnitaryGate(matrix)
 #Initialize the circuit for Grover's Algorithm
-groverAlgorithm = QuantumCircuit(nQubit, nQubit)
+groverAlgorithm = QuantumCircuit(nQubit)
 
 #Apply Hadamard transform to all qubits. This gives the quantum superposition for ampltiude amplification
 #That is, gives the state of 1/sqrt(N) sum_{x=0}^{N-1} |x>, where N = 2^nQubit
@@ -41,13 +44,17 @@ groverAlgorithm.i(range(nQubit-1))
 groverAlgorithm.h(nQubit-1)
 #Need to make this a toffoli gate that uses nQubit-1 control bits on the final qubit
 #groverAlgorithm.toffoli(0, 1, 2)
-groverAlgorithm.mct([0,1,2], 3)
+c3z = XGate().control(3)
+groverAlgorithm.append(c3z, [0,1,2,3])
 groverAlgorithm.i(range(nQubit-1))
 groverAlgorithm.h(nQubit-1)
+
 groverAlgorithm.x(range(nQubit))
 groverAlgorithm.h(range(nQubit))
-for i in range(nQubit):
-    groverAlgorithm.measure(i,i)
+groverAlgorithm.measure_all()
+#for i in range(nQubit):
+    #print("I",i)
+    #groverAlgorithm.measure(i,i)
 #Prints out circuit
 print(groverAlgorithm)
 
