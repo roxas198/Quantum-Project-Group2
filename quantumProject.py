@@ -15,19 +15,19 @@ print(L)
 #Randomly select index from 0 to N-1
 y = np.random.randint(2**nQubit)
 print(y)
-print(math.ceil(22.5*math.sqrt(2**nQubit) + 1.4 * (math.log(2**nQubit, 2))**2))
+#print(math.ceil(22.5*math.sqrt(2**nQubit) + 1.4 * (math.log(2**nQubit, 2))**2))
+
 
 m = 1
 l = 6 / 5.0
-
-for i in range(math.ceil(13.6 * nQubit)):
+for i in range(math.ceil(1.6*nQubit)):
     matrix = np.zeros((2**nQubit,2**nQubit))
-
-    for i in range(2**nQubit):
-        if (L[i] >= L[y]):
-            matrix[i][i] = 1
+    
+    for n in range(2**nQubit):
+        if (L[n] >= L[y]):
+            matrix[n][n] = 1
         else:
-            matrix[i][i] = -1
+            matrix[n][n] = -1
 
     #print(matrix)
     oracle = extensions.UnitaryGate(matrix)
@@ -71,18 +71,20 @@ for i in range(math.ceil(13.6 * nQubit)):
     # from the results, we get a dictionary containing the number of times (counts)
     # each result appeared
     counts = result.get_counts()
-    print(counts)
+    #print(counts)
     indexResult = int(max(counts, key=counts.get), 2)
-    print(indexResult)
+    #print(indexResult)
     if (L[indexResult] < L[y]):
         y = indexResult
         m = 1
-        plot_histogram(counts)
-        plt.show()
+        
+        #plt.show()
     else:
         i = i - 1
         m = min(l * m, nQubit)
-
+    plot_histogram(counts)
+    plt.show()
 # and display it on a histogram
-print(indexResult)
+#print(indexResult)
 print(y)
+
